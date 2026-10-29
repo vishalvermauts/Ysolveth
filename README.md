@@ -72,6 +72,26 @@ By avoiding unnecessary calls to frontier models for trivial and moderate prompt
 
 ---
 
+## Training Data
+
+Ysolveth was trained and evaluated using a multi-model consensus distillation pipeline to establish high-confidence difficulty labels across diverse real-world software engineering requests:
+
+- **Dataset Scale**: 300 prompts total spanning web development, full-stack systems, single-service utilities, distributed backend architectures, and database migrations.
+- **Consensus Labeling**: Labels were established via 4-vote majority consensus across frontier foundation models (`claude-sonnet-4-6`, `gemini-3.8-flash`, `luna-6`, and `claude-haiku-5-5`).
+- **Tie Resolution**: 4 ties excluded (unresolved 2-2 ties, 1.33%), leaving **296 usable prompts**.
+- **Dataset Distribution (296 Usable Prompts)**:
+  - `trivial`: 76 prompts (25.7%)
+  - `moderate`: 145 prompts (49.0%)
+  - `hard`: 75 prompts (25.3%)
+  - Overall split: trivial 76, moderate 145, hard 75.
+- **Data Partitioning & Held-Out Test Evaluation**:
+  - **Training Set**: 236 prompts (stratified: 60 trivial, 116 moderate, 60 hard) with a frozen `sentence-transformers/all-MiniLM-L6-v2` encoder.
+  - **Held-Out Test Set**: 60 prompts (16 trivial, 29 moderate, 15 hard) strictly isolated with zero overlap with the training pool.
+  - **Held-Out Accuracy**: **100% (60 of 60)** correct against the four-model consensus labels.
+- **Evaluation Methodology Note**: These labels come from the four-model consensus, and the **40-prompt hand-labelled set** detailed in the Benchmark section below is the stricter test against model consensus blindspots.
+
+---
+
 ## Benchmark
 
 Ysolveth Candidate 1.3.0 was evaluated on an independent, strictly held-out test set of **40 hand-labelled prompts** (10 trivial, 15 moderate, 15 hard) with zero overlap with the training pool.
@@ -264,7 +284,9 @@ Export the configuration into the standard StructZero runtime schema:
 
 ---
 
-## Attribution & License
+## Credits and Licence
 
+- **Encoder Architecture**: [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) by Sentence-Transformers, used under the [Apache-2.0 Licence](https://www.apache.org/licenses/LICENSE-2.0).
+- **Classification Head & Weights**: Developed for the StructZero platform and licensed under the [Apache-2.0 Licence](https://www.apache.org/licenses/LICENSE-2.0).
+- **Repository Licence**: This entire repository and its associated model artifacts are released under the [Apache-2.0 Licence](https://www.apache.org/licenses/LICENSE-2.0).
 - **Platform**: [StructZero — AI Software Engineering Platform](https://www.structzero.app/)
-- **Base Model**: `sentence-transformers/all-MiniLM-L6-v2` by Sentence-Transformers, licensed under Apache 2.0.
