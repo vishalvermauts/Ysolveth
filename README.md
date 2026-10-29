@@ -4,7 +4,7 @@ language:
 license: apache-2.0
 tags:
 - classifier
-- system-1-model
+- system-one-model
 - onnx
 - difficulty-classifier
 - structzero
@@ -14,24 +14,24 @@ tags:
 pipeline_tag: text-classification
 ---
 
-# Ysolveth: A System 1 Model for Software Engineering AI (Candidate 1.3.0)
+# Ysolveth: A System One Model for Software Engineering AI (Candidate 1.3.0)
 
 [![Platform](https://img.shields.io/badge/Platform-StructZero-blue)](https://www.structzero.app/)
-[![Model Type](https://img.shields.io/badge/Architecture-System_1_Model-orange)](https://www.structzero.app/)
+[![Model Type](https://img.shields.io/badge/Architecture-System_One_Model-orange)](https://www.structzero.app/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ONNX Runtime](https://img.shields.io/badge/Inference-ONNX_Runtime-brightgreen)](https://onnxruntime.ai/)
 
 > Developed for [StructZero — AI Software Engineering Platform](https://www.structzero.app/).
 
-**Ysolveth** is an ultra-fast, local **System 1 Model** engineered for software engineering prompt triage, complexity classification, and intelligent workflow routing. Operating non-autoregressively with sub-millisecond execution, it classifies prompts into three operational complexity tiers: **`trivial`**, **`moderate`**, and **`hard`**.
+**Ysolveth** is an ultra-fast, local **System One Model** engineered for software engineering prompt triage, complexity classification, and intelligent workflow routing. Operating non-autoregressively with sub-millisecond execution, it classifies prompts into three operational complexity tiers: **`trivial`**, **`moderate`**, and **`hard`**.
 
 ---
 
-## What is a "System 1 Model"?
+## What is a "System One Model"?
 
 Drawing from cognitive science (Daniel Kahneman’s *Thinking, Fast and Slow*), modern AI architectures are separating into two distinct computational layers:
-- **System 1 (Fast, Reflexive, Parallel, Non-Generative):** Instant evaluation and routing. Operates in single-digit milliseconds without token generation loops, outputting calibrated, type-safe decision probabilities.
-- **System 2 (Slow, Deliberative, Autoregressive):** Heavyweight generative models (LLMs like Claude 3.5 Sonnet, GPT-4o, or DeepSeek R1) that perform multi-turn reasoning, chain-of-thought code generation, and iterative problem solving.
+- **System One (Fast, Reflexive, Parallel, Non-Generative):** Instant evaluation and routing. Operates in single-digit milliseconds without token generation loops, outputting calibrated, type-safe decision probabilities.
+- **System Two (Slow, Deliberative, Autoregressive):** Heavyweight generative models (LLMs like Claude 3.5 Sonnet, GPT-4o, or DeepSeek R1) that perform multi-turn reasoning, chain-of-thought code generation, and iterative problem solving.
 
 ### How Ysolveth Differs from Standard LLM Prompting
 Traditional systems often prompt an LLM to rate difficulty (e.g., *"Rate this task 1-10 in JSON"*). This introduces:
@@ -39,9 +39,9 @@ Traditional systems often prompt an LLM to rate difficulty (e.g., *"Rate this ta
 2. **Schema & Hallucination Vulnerability**: LLMs can produce malformed JSON or out-of-bounds labels.
 3. **High Inference Cost**: Burning frontier tokens merely to make a routing decision.
 
-**Ysolveth is a true System 1 model:**
+**Ysolveth is a true System One model:**
 - **Zero Token Generation**: Evaluates prompt state in a single parallel tensor pass.
-- **Impossible to Hallucinate**: Maps directly to a fixed 3-class probability distribution ($\mathbb{R}^{384} 	o \Delta^2$).
+- **Impossible to Hallucinate**: Maps directly to a fixed 3-class probability distribution ($\mathbb{R}^{384} \to \Delta^2$).
 - **Deterministic & Calibrated**: Native logits are temperature-calibrated so software systems can branch safely without parsing textual explanations.
 - **Ultra-Low Latency**: Runs in **~2 to 8ms on standard CPU** with zero GPU requirements ($0.00 marginal cost).
 
