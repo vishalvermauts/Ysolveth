@@ -1,0 +1,12 @@
+{
+  "model_version": "1.3.0",
+  "architecture": "MiniLM-L6-v2 + Linear Classification Head",
+  "sha256": {
+    "encoder_int8.onnx": "9d6913869f2523a41c8e24252e69061ed31b69a8d04a7ec6359d2d1ff8e308f6",
+    "head_config.json": "d5c13b57ed81a167897030fe04093da4b7d21d5a6a6c3591c7ade412caaee551",
+    "tokenizer.json": "e619bb7888bee125bfd361ad7eb9f8e3de9b5ece0ed0e5949db658630b9c60da",
+    "tokenizer_config.json": "872b6936be955bc3aea75ed599264d865626d68feede7e58b01e378e6332bd74",
+    "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3",
+    "special_tokens_map.json": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3"
+  }
+}
