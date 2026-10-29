@@ -4,6 +4,7 @@ language:
 license: apache-2.0
 tags:
 - classifier
+- system-1-model
 - onnx
 - difficulty-classifier
 - structzero
@@ -13,34 +14,55 @@ tags:
 pipeline_tag: text-classification
 ---
 
-# Ysolveth (Candidate 1.3.0)
+# Ysolveth: A System 1 Model for Software Engineering AI (Candidate 1.3.0)
 
 [![Platform](https://img.shields.io/badge/Platform-StructZero-blue)](https://www.structzero.app/)
+[![Model Type](https://img.shields.io/badge/Architecture-System_1_Model-orange)](https://www.structzero.app/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 [![ONNX Runtime](https://img.shields.io/badge/Inference-ONNX_Runtime-brightgreen)](https://onnxruntime.ai/)
 
 > Developed for [StructZero — AI Software Engineering Platform](https://www.structzero.app/).
 
-**Ysolveth** is an ultra-fast, local prompt difficulty estimation and triage model designed to analyze software engineering requests and complex development tasks before routing them to generative AI pipelines. It classifies prompts into three operational complexity tiers: **`trivial`**, **`moderate`**, and **`hard`**.
+**Ysolveth** is an ultra-fast, local **System 1 Model** engineered for software engineering prompt triage, complexity classification, and intelligent workflow routing. Operating non-autoregressively with sub-millisecond execution, it classifies prompts into three operational complexity tiers: **`trivial`**, **`moderate`**, and **`hard`**.
 
 ---
 
-## What It Is (Architecture)
+## What is a "System 1 Model"?
 
-**Ysolveth is not an LLM** or autoregressive text-generation model. It is a compact, sub-millisecond classifier comprising:
+Drawing from cognitive science (Daniel Kahneman’s *Thinking, Fast and Slow*), modern AI architectures are separating into two distinct computational layers:
+- **System 1 (Fast, Reflexive, Parallel, Non-Generative):** Instant evaluation and routing. Operates in single-digit milliseconds without token generation loops, outputting calibrated, type-safe decision probabilities.
+- **System 2 (Slow, Deliberative, Autoregressive):** Heavyweight generative models (LLMs like Claude 3.5 Sonnet, GPT-4o, or DeepSeek R1) that perform multi-turn reasoning, chain-of-thought code generation, and iterative problem solving.
+
+### How Ysolveth Differs from Standard LLM Prompting
+Traditional systems often prompt an LLM to rate difficulty (e.g., *"Rate this task 1-10 in JSON"*). This introduces:
+1. **Severe Latency Penalties**: Autoregressive token-by-token generation takes 800ms to 2,500ms.
+2. **Schema & Hallucination Vulnerability**: LLMs can produce malformed JSON or out-of-bounds labels.
+3. **High Inference Cost**: Burning frontier tokens merely to make a routing decision.
+
+**Ysolveth is a true System 1 model:**
+- **Zero Token Generation**: Evaluates prompt state in a single parallel tensor pass.
+- **Impossible to Hallucinate**: Maps directly to a fixed 3-class probability distribution ($\mathbb{R}^{384} 	o \Delta^2$).
+- **Deterministic & Calibrated**: Native logits are temperature-calibrated so software systems can branch safely without parsing textual explanations.
+- **Ultra-Low Latency**: Runs in **~2 to 8ms on standard CPU** with zero GPU requirements ($0.00 marginal cost).
+
+---
+
+## Architecture & Deployment
+
+Ysolveth is packaged as a compact, self-contained edge artifact (~23 MB total):
 1. **Embedding Backbone**: Frozen `sentence-transformers/all-MiniLM-L6-v2` encoder quantized to **int8 ONNX** (`encoder_int8.onnx`, ~22.8 MB).
 2. **Classification Head**: Lightweight calibrated linear layer (`head_config.json`, 384 input dimensions &rarr; 3 output classes with temperature scaling & softmax).
-3. **Inference Latency**: ~2 to 8ms on standard CPU (zero GPU required).
+3. **Air-Gapped & Local**: Can be loaded directly into in-process microservices (Rust/Axum, Node.js, Python) with zero external network access.
 
 ---
 
 ## Use Cases
 
 ### 1. Intelligent Model & Workflow Routing
-Directing all user prompts to heavyweight frontier models (e.g. Claude 3.5 Sonnet, GPT-4o) incurs high costs and latency. Ysolveth enables tiered triage:
-- **`trivial`**: Route to lightweight, inexpensive models or deterministic templates (e.g., regex fixes, simple refactors, documentation typo updates).
+Directing all user prompts to heavyweight frontier models incurs high costs and latency. Ysolveth acts as the gatekeeper:
+- **`trivial`**: Route to lightweight models or deterministic templates (e.g., regex fixes, typo corrections, single-file edits).
 - **`moderate`**: Route to standard reasoning coding models.
-- **`hard`**: Route into multi-model consensus, multi-turn architecture debate, and strict sandbox verification harnesses where critical multi-component verification is required.
+- **`hard`**: Route into multi-model consensus, multi-turn architecture debate, and strict sandbox verification harnesses where multi-component verification is required.
 
 ### 2. Guardrails Against Single-Model Blindspots
 Multi-tenant database schema migrations, Stripe webhook reconciliation, and OAuth/SAML integrations require multiple validation steps. When flagged by Ysolveth as `hard`, the orchestrator ensures that code changes are guarded by multi-agent consensus rather than letting a single model blindly apply changes.
@@ -54,7 +76,7 @@ By avoiding unnecessary calls to frontier models for trivial and moderate prompt
 
 Ysolveth Candidate 1.3.0 was evaluated on an independent, strictly held-out test set of **40 hand-labelled prompts** (10 trivial, 15 moderate, 15 hard) with zero overlap with the training pool.
 
-### 4.1 Primary Metric: Critical Failures
+### Primary Metric: Critical Failures
 A **critical failure** is defined as classifying a **`hard`** request as **`trivial`** or **`moderate`**, which routes complex architectures into unguided single-model lanes without verification.
 
 | Model | Critical Failures (Hard &rarr; Trivial/Mod) | Critical Failure Rate | Overall Test Accuracy (40 Prompts) |
@@ -65,7 +87,7 @@ A **critical failure** is defined as classifying a **`hard`** request as **`triv
 - **Baseline Live Mini Model**: Erroneously classified 14 of 15 hard prompts as `moderate`.
 - **Ysolveth Candidate 1.3.0**: Correctly classified all 15 hard prompts as `hard` (0 of 15 critical failures, 100.0% accuracy across all 40 prompts).
 
-### 4.2 Classification Report (Ysolveth Candidate 1.3.0)
+### Classification Report (Ysolveth Candidate 1.3.0)
 
 ```text
               precision    recall  f1-score   support
@@ -79,7 +101,7 @@ A **critical failure** is defined as classifying a **`hard`** request as **`triv
 weighted avg     1.0000    1.0000    1.0000        40
 ```
 
-### 4.3 Confusion Matrix Comparison
+### Confusion Matrix Comparison
 
 #### Baseline Mini Model Confusion Matrix:
 ```text
